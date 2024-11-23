@@ -24,48 +24,53 @@ struct AddItemPageView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Voucher Details")) {
+                Section{
                     TextField("Title", text: $title)
                     TextField("Notes", text: $notes)
-                    HStack {
-                        Text("Amount")
-                        Spacer()
-                        Picker("", selection: $amount) {
-                            ForEach(voucherValues, id: \.self) { value in
-                                Text("\(value)")
-                            }
-                        }
-                        .pickerStyle(MenuPickerStyle())
-                    }
                 }
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Error"), message: Text("All fields are required"), dismissButton: .default(Text("OK")))
+                Section {
+                    Picker("Amount", selection: $amount) {
+                        ForEach(voucherValues, id: \.self) { value in
+                            Text("\(value)")
+                        }
+                    }
+                    .pickerStyle(.menu)
                 }
             }
-            .navigationTitle("Add New Voucher")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+//                ToolbarItem(placement: .principal) {
+//                    Text("Add Item")
+//                        .bold()
+//                }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Save") {
-                        if title.isEmpty || notes.isEmpty || amount == 0 {
+                    Button() {
+                        if title.isEmpty {
                             showAlert = true
-                        } else {
-//                            let newVoucher = voucherItem(title: title, value: amount, notes: notes)
-//                            saveAction(newVoucher)
-                            saveAction(title,amount,notes)
-                            presentationMode.wrappedValue.dismiss()
+                        }else {
+                            saveAction(title, amount, notes)
+                            dismiss()
                         }
-                        dismiss()
+                    }label: {
+                        Text("Save")
                     }
                 }
                 ToolbarItem(placement: .topBarLeading){
-                    Button("Cancel") {
+                    Button(){
                         dismiss()
+                    }label: {
+                        Text("Cancel")
                     }
                     .tint(.red)
                 }
             }
+            .navigationTitle("Add Item")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
+struct AddItemPageView_Previews: PreviewProvider {
+    static var previews: some View {
+        AddItemPageView(saveAction: { _,_,_ in })
+    }
+}
